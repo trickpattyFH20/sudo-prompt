@@ -231,7 +231,11 @@ function MacCommand(instance, end) {
   // This runs in a subshell and will not change the cwd of sudo-prompt-script.
   var cwd = Node.process.cwd();
   script.push('cd "' + EscapeDoubleQuotes(cwd) + '"');
-  script.push(instance.command);
+  if (instance.options.asUser) {
+    script.push(`sudo -u ${instance.options.asUser} ${instance.command}`);
+  } else {
+    script.push(instance.command);
+  }
   script = script.join('\n');
   Node.fs.writeFile(path, script, 'utf-8', end);
 }
